@@ -3,16 +3,11 @@ import TheWelcome from '../components/TheWelcome.vue'
 </script>
 
 <template>
-  <!-- <main>
-    <TheWelcome />
-  </main> -->
-  <div class="common-layout">
-    <el-container>
-      <el-header>Header</el-header>
-      <el-main>Main</el-main>
-      <el-footer>Footer</el-footer>
-    </el-container>
-  </div>
+  <el-container>
+    <el-header>Header</el-header>
+    <el-main>Main</el-main>
+    <el-footer>Footer</el-footer>
+  </el-container>
 </template>
 
 <style scoped lang="less">
@@ -20,9 +15,13 @@ import TheWelcome from '../components/TheWelcome.vue'
   width: 100%;
   .el-header {
     width: 100%;
+    background: #C3F8FF;
   }
   .el-main {
-    width: 1280px;
+    background: #ABD9FF;
+  }
+  .el-footer {
+    background: #FFF6BF;
   }
 }
 </style>
