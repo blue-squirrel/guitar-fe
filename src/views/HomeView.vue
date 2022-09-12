@@ -1,14 +1,26 @@
-<script setup lang="ts">
-import TheWelcome from '../components/TheWelcome.vue'
-</script>
-
 <template>
   <el-container>
-    <el-header>Header</el-header>
-    <el-main>Main</el-main>
+    <el-header>个人的吉他谱网站</el-header>
+    <el-main>
+      <el-button @click="goScoreDetail">成都</el-button>
+      <el-button>晴天</el-button>
+      <el-button>情非得已</el-button>
+    </el-main>
     <el-footer>Footer</el-footer>
   </el-container>
 </template>
+
+<script>
+  export default {
+    props: {
+    },
+    methods: {
+      goScoreDetail() {
+        window.location.href = '/about';
+      }
+    }
+  }
+</script>
 
 <style scoped lang="less">
 .el-container {
