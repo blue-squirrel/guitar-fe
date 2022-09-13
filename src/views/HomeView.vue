@@ -2,17 +2,29 @@
   <el-container>
     <el-header>个人的吉他谱网站</el-header>
     <el-main>
-      <el-button @click="goScoreDetail">成都</el-button>
-      <el-button>晴天</el-button>
-      <el-button>情非得已</el-button>
+      <el-button
+        v-for="item in scoreList"
+        :key="item"
+        @click="goScoreDetail"
+      >
+        {{item}}
+      </el-button>
     </el-main>
     <el-footer>Footer</el-footer>
   </el-container>
 </template>
 
-<script>
+<script lang="ts">
   export default {
     props: {
+    },
+    data() {
+      return {
+        scoreList: ['晴天', '成都', '情非得已']
+      }
+    },
+    mounted() {
+      console.log(`the component is now mounted.`)
     },
     methods: {
       goScoreDetail() {
