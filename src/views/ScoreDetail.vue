@@ -1,7 +1,8 @@
 <template>
   <div class="score-detail">
-    <div class="score-detail-header">
-      <el-button type="primary" @click="backHmoe">返回</el-button>
+    <div v-if="!isFullScreen" class="score-detail-header">
+      <el-button class="back" type="primary" @click="backHmoe">返回</el-button>
+      <el-button class="full" type="primary" @click="openFullScreen">全屏模式</el-button>
       <el-select v-model="pageSize" class="m-2">
         <el-option
           v-for="item in options"
@@ -34,13 +35,19 @@
           'width': scoreWidth + 'px',
           'margin-left': transLen * scoreItemWidth + 'px'
         }">
-        <div class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
+        <div class="score-list-item"
+          :class="{'full-screen': isFullScreen}"
+          :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试1.png" alt="">
         </div>
-        <div v-if="scoreLength > 1" class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
+        <div v-if="scoreLength > 1" class="score-list-item"
+          :class="{'full-screen': isFullScreen}"
+          :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试2.png" alt="">
         </div>
-        <div v-if="scoreLength > 2" class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
+        <div v-if="scoreLength > 2" class="score-list-item"
+          :class="{'full-screen': isFullScreen}"
+          :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试3.png" alt="">
         </div>
       </div>
@@ -51,6 +58,7 @@
 <script lang="ts">
 import { reactive, onMounted, toRefs, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import screenfull from 'screenfull';
 export default {
   props: {
   },
@@ -79,7 +87,8 @@ export default {
       scoreLength: Math.ceil((Math.random() * 5)),
       webWidth: 1000,
       webHeight: 1000,
-      transLen: 0
+      transLen: 0,
+      isFullScreen: false
     })
 
     // 单页宽度
@@ -103,13 +112,35 @@ export default {
         || state.scoreLength <= 1;
     });
 
-    onMounted(async () => {
+    const handler = () => {
+      let isFullscreen = document.fullscreenElement !== null;
+      if (!isFullscreen) {
+        // 退出全屏时候解除监听，不然每次监听都会添加一次绑定 
+        document.removeEventListener("fullscreenchange", handler);
+      }
+    };
+
+    const openFullScreen = () => {
+      if (!screenfull.isEnabled) {
+        console.error('你的浏览器暂不支持全屏');
+        return false
+      }
+      screenfull.request();
+    };
+
+    onMounted(() => {
+      if (screenfull.isEnabled) {
+	      screenfull.on('change', () => {
+          screenfull.isFullscreen && (state.isFullScreen = true);
+          !screenfull.isFullscreen && (state.isFullScreen = false);
+        });
+      }
+
       state.webWidth = document.body.clientWidth;
       state.webHeight = document.body.clientHeight;
-      console.log(document.body.clientWidth, state.webWidth)
 
       state.options = [];
-      for (let i = 1; i < state.scoreLength; i++) {
+      for (let i = 1; i <= state.scoreLength; i++) {
         state.options.push({
           value: i,
           label: i + '页显示'
@@ -150,6 +181,7 @@ export default {
       prevDisabled,
       nextDisabled,
       backHmoe,
+      openFullScreen,
       goPrev,
       goNext
     }
@@ -165,8 +197,12 @@ export default {
     background: #C3F8FF;
 
     button {
-      margin-left: 20px;
+      margin-left: 0;
       margin-right: 20px;
+
+      &.back {
+        margin-left: 20px;
+      }
     }
   }
   &-content {
@@ -212,7 +248,10 @@ export default {
         height: calc(100vh - 50px);
         padding-left: 5px;
         padding-right: 5px;
-        // border: 1px solid #000;
+        
+        &.full-screen {
+          height: 100vh;
+        }
         img {
           max-width: 100%;
           max-height: 100%;
