@@ -1,7 +1,7 @@
 <template>
   <div class="score-detail">
     <div class="score-detail-header">
-      <el-button type="primary" @click="backHmoe">返回</el-button>666
+      <el-button type="primary" @click="backHmoe">返回</el-button>
       <el-select v-model="pageSize" class="m-2">
         <el-option
           v-for="item in options"
@@ -12,14 +12,35 @@
       </el-select>
     </div>
     <div class="score-detail-content">
-      <div class="score-list" :style="{'width': scoreWidth + 'px'}">
+      <div class="pagination">
+        <el-icon
+          class="pagination-left"
+          :class="{disabled: prevDisabled}"
+          size="30px"
+          color="#fff"
+          @click="goPrev"
+        ><ArrowLeft /></el-icon>
+        <el-icon
+          class="pagination-right"
+          :class="{disabled: nextDisabled}"
+          size="30px"
+          color="#fff"
+          @click="goNext"
+        ><ArrowRight /></el-icon>
+      </div>
+      <div
+        class="score-list"
+        :style="{
+          'width': scoreWidth + 'px',
+          'margin-left': transLen * scoreItemWidth + 'px'
+        }">
         <div class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试1.png" alt="">
         </div>
-        <div class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
+        <div v-if="scoreLength > 1" class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试2.png" alt="">
         </div>
-        <div class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
+        <div v-if="scoreLength > 2" class="score-list-item" :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试3.png" alt="">
         </div>
       </div>
@@ -55,34 +76,82 @@ export default {
           label: '4页显示',
         }
       ],
-      scoreLength: 3,
+      scoreLength: Math.ceil((Math.random() * 5)),
       webWidth: 1000,
-      webHeight: 1000
+      webHeight: 1000,
+      transLen: 0
     })
 
+    // 单页宽度
     let scoreItemWidth = computed(() => {
         return state.webWidth / state.pageSize;
     });
 
+    // 总宽度
     let scoreWidth = computed(() => {
         return (state.webWidth / state.pageSize) * state.scoreLength;
+    });
+
+    // 上一页禁用
+    let prevDisabled = computed(() => {
+        return state.transLen >= 0;
+    });
+
+    // 下一页禁用
+    let nextDisabled = computed(() => {
+      return (Math.abs(state.transLen) + state.pageSize >= state.scoreLength)
+        || state.scoreLength <= 1;
     });
 
     onMounted(async () => {
       state.webWidth = document.body.clientWidth;
       state.webHeight = document.body.clientHeight;
       console.log(document.body.clientWidth, state.webWidth)
+
+      state.options = [];
+      for (let i = 1; i < state.scoreLength; i++) {
+        state.options.push({
+          value: i,
+          label: i + '页显示'
+        });
+      }
+
+      if (state.options.length < 2) {
+        state.pageSize = 1;
+      }
     })
 
     const backHmoe = () => {
       window.history.back();
     }
 
+    // 上一页
+    const goPrev = () => {
+      if (prevDisabled.value) {
+        return;
+      }
+
+      // 下一页
+      state.transLen++;
+    }
+
+    const goNext = () => {
+      if (nextDisabled.value) {
+        return;
+      }
+
+      state.transLen--;
+    }
+
     return {
       ...toRefs(state),
       scoreItemWidth,
       scoreWidth,
-      backHmoe
+      prevDisabled,
+      nextDisabled,
+      backHmoe,
+      goPrev,
+      goNext
     }
   }
 }
@@ -94,17 +163,56 @@ export default {
     line-height: 50px;
     height: 50px;
     background: #C3F8FF;
+
+    button {
+      margin-left: 20px;
+      margin-right: 20px;
+    }
   }
   &-content {
     overflow: hidden;
+    position: relative;
+
+    .pagination {
+      position: absolute;
+      z-index: 1;
+      left: 50%;
+      bottom: 5%;
+      transform: translate(-50%);
+
+      &-left, &-right {
+        background: rgba(0, 0, 0, .4);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+
+        &.disabled {
+          background: rgba(0 , 0, 0, .1);
+        }
+      }
+
+      &-left {
+        margin-right: 50px;
+      }
+
+      &-right {
+        margin-left: 50px;
+      }
+
+      // &-right {
+      //   background: #000;
+      // }
+    }
     .score-list {
       display: flex;
+      transition: all .35s;
       &-item {
         position: relative;
         height: calc(100vh - 50px);
         padding-left: 5px;
         padding-right: 5px;
-        border: 1px solid #000;
+        // border: 1px solid #000;
         img {
           max-width: 100%;
           max-height: 100%;
