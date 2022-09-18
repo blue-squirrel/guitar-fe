@@ -5,9 +5,9 @@
       <el-button
         v-for="item in scoreList"
         :key="item"
-        @click="goScoreDetail"
+        @click="goScoreDetail(item.id)"
       >
-        {{item}}
+        {{item.title}}
       </el-button>
     </el-main>
     <el-footer>Footer</el-footer>
@@ -15,23 +15,42 @@
 </template>
 
 <script lang="ts">
-  export default {
-    props: {
-    },
-    data() {
-      return {
-        scoreList: ['晴天', '成都', '情非得已']
-      }
-    },
-    mounted() {
-      console.log(`the component is now mounted.`)
-    },
-    methods: {
-      goScoreDetail() {
-        window.location.href = '/about';
-      }
+import axios from 'axios';
+import { reactive, onMounted, toRefs, computed } from 'vue';
+export default {
+  props: {
+  },
+  setup() {
+    const state = reactive({
+      scoreList: [{
+        id: 1,
+        title: '晴天'
+      }]
+    })
+
+    onMounted(async () => {
+      // todo
+      state.scoreList = [];
+      const res = await axios.get('/api/score/findAll');
+      res.data.forEach(item => {
+        state.scoreList.push({
+          id: item.id,
+          title: item.title
+        });
+      });
+      console.log(res)
+    })
+
+    const goScoreDetail = (id: number) => {
+      window.location.href = `/about?id=${id}`;
+    }
+
+    return {
+      ...toRefs(state),
+      goScoreDetail,
     }
   }
+}
 </script>
 
 <style scoped lang="less">
