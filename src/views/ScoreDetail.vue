@@ -35,7 +35,14 @@
           'width': scoreWidth + 'px',
           'margin-left': transLen * scoreItemWidth + 'px'
         }">
-        <div class="score-list-item"
+        <div
+          v-for="item in scoreUrlList" 
+          class="score-list-item"
+          :class="{'full-screen': isFullScreen}"
+          :style="{'width': scoreItemWidth + 'px'}">
+          <img :src=item alt="">
+        </div>
+        <!-- <div class="score-list-item"
           :class="{'full-screen': isFullScreen}"
           :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试1.png" alt="">
@@ -49,7 +56,7 @@
           :class="{'full-screen': isFullScreen}"
           :style="{'width': scoreItemWidth + 'px'}">
           <img src="../../public/测试3.png" alt="">
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -57,7 +64,8 @@
 
 <script lang="ts">
 import { reactive, onMounted, toRefs, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import axios from 'axios';
 import screenfull from 'screenfull';
 export default {
   props: {
@@ -65,6 +73,7 @@ export default {
   setup() {
     const router = useRouter()
     const state = reactive({
+      scoreUrlList: [],
       pageSize: 2,
       options: [
         {
@@ -128,7 +137,15 @@ export default {
       screenfull.request();
     };
 
-    onMounted(() => {
+    onMounted(async () => {
+      const route = useRoute();
+      const scoreId = route.query.id;
+      const res = await axios.get(`/api/score/findById?id=${scoreId}`);
+      const scoreUrlList = res.data.scoreUrlList;
+      state.scoreUrlList = scoreUrlList;
+      state.scoreLength = scoreUrlList.length;
+
+
       if (screenfull.isEnabled) {
 	      screenfull.on('change', () => {
           screenfull.isFullscreen && (state.isFullScreen = true);
