@@ -1,0 +1,1 @@
+export { uploadCos } from './cos';
