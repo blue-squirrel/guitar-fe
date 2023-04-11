@@ -15,7 +15,7 @@
 # # COPY nginx.conf /etc/nginx/nginx.conf
 # CMD npm run dev
 
-FROM node
+FROM node:14
 WORKDIR /app
 COPY package*.json /app/
 RUN npm install
