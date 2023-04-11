@@ -17,9 +17,9 @@
 
 FROM node:14
 WORKDIR /app
-COPY package*.json /app/
-RUN npm install && npm run build
+# COPY package*.json /app/
 COPY . .
+RUN npm install && npm run build
 
-COPY /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=0 nginx.conf /etc/nginx/nginx.conf
