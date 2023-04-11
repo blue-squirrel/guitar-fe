@@ -18,7 +18,7 @@
 FROM node:14
 WORKDIR /app
 COPY package*.json /app/
-RUN npm install
+RUN npm install && npm run build
 COPY . .
 
 COPY /app/dist /usr/share/nginx/html
