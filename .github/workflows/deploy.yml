@@ -24,7 +24,7 @@ jobs:
           node-version: 14
       - name: 打包镜像, 上传 Docker Hub
         run: |
-          docker login -u ${{ secrets.REGISTRY_USERNAME }} ---password-stdin ${{ secrets.REGISTRY_PASSWORD }}
+          docker login -e ${{ secrets.REGISTRY_EMAIL }} -p ${{ secrets.REGISTRY_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPOSITORY }} .
           docker push ${{ secrets.DOCKER_REPOSITORY }}
 
