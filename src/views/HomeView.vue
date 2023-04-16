@@ -2,22 +2,25 @@
   <el-container>
     <el-header>
       个人的吉他谱网站
-      <el-button
-        @click="uploadShow = true"
-      >
-        上传曲谱
-      </el-button>
     </el-header>
     <el-main>
-      <el-button
+      <el-card
+        type="primary"
+        shadow="always"
         v-for="item in scoreList"
         :key="item"
         @click="goScoreDetail(item.id)"
       >
         {{item.title}}
-      </el-button>
+      </el-card>
     </el-main>
-    <el-footer>Footer</el-footer>
+    <el-footer>
+      <el-button
+        type="primary"
+        @click="uploadShow = true"
+      >
+        上传曲谱
+      </el-button></el-footer>
   </el-container>
   <el-dialog
     v-model="uploadShow"
@@ -40,7 +43,6 @@
           class="upload-demo"
           multiple
           action="#"
-          :limit="3"
           :on-progress="fileChange"
         >
           <el-button type="primary">点击上传曲谱</el-button>
@@ -149,15 +151,31 @@ export default {
 <style scoped lang="less">
 .el-container {
   width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
   .el-header {
     width: 100%;
-    background: #C3F8FF;
+    line-height: 60px;
+    background: #fff;
+    font-weight: 600;
+    font-size: 18px;
   }
   .el-main {
-    background: #ABD9FF;
+    flex: 1;
+    background: #f7f7f7;
+    display: flex;
+
+    .el-card {
+      height: 80px;
+      margin-right: 20px;
+      // line-height: 100px;
+      cursor: pointer;
+    }
   }
   .el-footer {
-    background: #FFF6BF;
+    line-height: 60px;
+    background: #fff;
   }
 }
 </style>
