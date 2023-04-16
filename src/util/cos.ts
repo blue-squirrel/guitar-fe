@@ -1,7 +1,7 @@
 // import moment from 'moment'
 // import { credential } from '@/api/common'
 import COS from 'cos-js-sdk-v5';
-export const uploadCos = async (file, fileName) => {
+export const uploadCos = async (file, filePath) => {
  // 为了保证桶的数据安全，数据桶的参数需要后端给你传，这样比较安全
 //  const res = await credential({ bucketKey: 'gas_bucket' })
 let res = {
@@ -31,14 +31,15 @@ let res = {
 //    }
 //  })
 
+console.log(filePath, 88)
  // 上传图片
  return new Promise((resolve, reject) => {
    // 这里使用最简单的 putObject 方法上传你需要上传的文件。
    cos.putObject({
      Bucket: bucketName, /* 必须 */
      Region: region, /* 存储桶所在地域，必须字段 */
-     // Key: `${new Date().getTime()}${fileName}`,
-     Key: '/guitar/' + fileName,
+     // Key: `${new Date().getTime()}${filePath}`,
+     Key: filePath,
      StorageClass: 'STANDARD',
      Body: file, // 上传文件对象
     //  onProgress: progressData => {

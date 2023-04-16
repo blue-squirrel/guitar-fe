@@ -85,9 +85,9 @@ export default {
       }],
       uploadShow: false,
       scoreData: {
-        // title: '',
-        // author: '',
-        // scoreUrl: ''
+        title: '',
+        author: '',
+        scoreUrl: ''
       },
       fileList: [],
       rules: {
@@ -123,9 +123,16 @@ export default {
       window.location.href = `/about?id=${id}`;
     }
 
-    const fileChange = async (event, file, files) => {
+    const fileChange = async (event: any, file: { name: string; raw: any; }, files: any) => {
       try {
-        const res = await uploadCos(file.raw, file.name);
+        console.log(file, state.scoreData.title)
+        let {title, author} = state.scoreData;
+        author = author ? `(${author})` : '';
+        let prePath = title
+          ? '/guitar/' + title + author + '/'
+          : '/guitar/';
+        const filePath = prePath + file.name;
+        const res = await uploadCos(file.raw, filePath);
         const reg = /\/.+/;
         const url = res.Location.match(reg)[0];
         state.fileList = [...state.fileList, {name: file.name, value: url}];
