@@ -1,3 +1,4 @@
+-- Active: 1681568586219@@180.76.228.38@3306@node
 <template>
   <el-container>
     <el-header>
@@ -11,7 +12,8 @@
         :key="item"
         @click="goScoreDetail(item.id)"
       >
-        {{item.title}}
+        <div class="score-title">{{ item.title }}</div>
+        <div>{{ item.author }}</div>
       </el-card>
     </el-main>
     <el-footer>
@@ -78,13 +80,14 @@ export default {
     const state = reactive({
       scoreList: [{
         id: 1,
-        title: '晴天'
+        title: '晴天',
+        author: ''
       }],
       uploadShow: false,
       scoreData: {
-        title: '',
-        author: '',
-        scoreUrl: ''
+        // title: '',
+        // author: '',
+        // scoreUrl: ''
       },
       fileList: [],
       rules: {
@@ -99,15 +102,22 @@ export default {
 
     onMounted(async () => {
       // todo
-      state.scoreList = [];
+      getScoreList();
+    })
+
+    const getScoreList = async () => {
+      const scoreList: any[] = [];
       const res = await axios.get('/api/score/findAll');
       res.data.forEach((item: any) => {
-        state.scoreList.push({
+        scoreList.push({
           id: item.id,
-          title: item.title
+          title: item.title,
+          author: item.author
         });
       });
-    })
+
+      state.scoreList = scoreList;
+    }
 
     const goScoreDetail = (id: number) => {
       window.location.href = `/about?id=${id}`;
@@ -132,6 +142,8 @@ export default {
       try {
         const res = await axios.post('/api/score/upload', state.scoreData);
         state.uploadShow = false;
+        state.scoreData = {};
+        getScoreList();
       } catch (error) {
         ElMessage.error('上传失败，请重新检查');
         console.error(error);
@@ -141,6 +153,7 @@ export default {
     return {
       ...toRefs(state),
       goScoreDetail,
+      getScoreList,
       fileChange,
       handleUpload,
     }
@@ -167,10 +180,18 @@ export default {
     display: flex;
 
     .el-card {
-      height: 80px;
+      width: 140px;
+      height: 100px;
       margin-right: 20px;
       // line-height: 100px;
       cursor: pointer;
+
+      .score-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+      }
     }
   }
   .el-footer {

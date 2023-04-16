@@ -208,10 +208,13 @@ export default {
 
 <style scoped lang="less">
 .score-detail {
+  background: #f7f7f7;
   &-header {
     line-height: 50px;
     height: 50px;
-    background: #C3F8FF;
+    background: #fff;
+    box-shadow: 0 12px 10px -10px rgb(0 0 0 / 10%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
     button {
       margin-left: 0;
