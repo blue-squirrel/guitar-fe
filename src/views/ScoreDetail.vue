@@ -2,7 +2,9 @@
   <div class="score-detail">
     <div v-if="!isFullScreen" class="score-detail-header">
       <el-button class="back" type="primary" @click="backHmoe">返回</el-button>
-      <el-button class="full" type="primary" @click="openFullScreen">全屏模式</el-button>
+      <el-button class="full" type="primary" @click="openFullScreen"
+        >全屏模式</el-button
+      >
       <el-select v-model="pageSize" class="m-2">
         <el-option
           v-for="item in options"
@@ -16,31 +18,35 @@
       <div class="pagination">
         <el-icon
           class="pagination-left"
-          :class="{disabled: prevDisabled}"
+          :class="{ disabled: prevDisabled }"
           size="30px"
           color="#fff"
           @click="goPrev"
-        ><ArrowLeft /></el-icon>
+          ><ArrowLeft
+        /></el-icon>
         <el-icon
           class="pagination-right"
-          :class="{disabled: nextDisabled}"
+          :class="{ disabled: nextDisabled }"
           size="30px"
           color="#fff"
           @click="goNext"
-        ><ArrowRight /></el-icon>
+          ><ArrowRight
+        /></el-icon>
       </div>
       <div
         class="score-list"
         :style="{
-          'width': scoreWidth + 'px',
+          width: scoreWidth + 'px',
           'margin-left': transLen * scoreItemWidth + 'px'
-        }">
+        }"
+      >
         <div
-          v-for="item in scoreUrlList" 
+          v-for="item in scoreUrlList"
           class="score-list-item"
-          :class="{'full-screen': isFullScreen}"
-          :style="{'width': scoreItemWidth + 'px'}">
-          <img :src=item alt="">
+          :class="{ 'full-screen': isFullScreen }"
+          :style="{ width: scoreItemWidth + 'px' }"
+        >
+          <img :src="item" alt="" />
         </div>
         <!-- <div class="score-list-item"
           :class="{'full-screen': isFullScreen}"
@@ -63,13 +69,12 @@
 </template>
 
 <script lang="ts">
-import { reactive, onMounted, toRefs, computed } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
-import axios from 'axios';
-import screenfull from 'screenfull';
+import { reactive, onMounted, toRefs, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+import screenfull from 'screenfull'
 export default {
-  props: {
-  },
+  props: {},
   setup() {
     const router = useRouter()
     const state = reactive({
@@ -78,22 +83,22 @@ export default {
       options: [
         {
           value: 1,
-          label: '1页显示',
+          label: '1页显示'
         },
         {
           value: 2,
-          label: '2页显示',
+          label: '2页显示'
         },
         {
           value: 3,
-          label: '3页显示',
+          label: '3页显示'
         },
         {
           value: 4,
-          label: '4页显示',
+          label: '4页显示'
         }
       ],
-      scoreLength: Math.ceil((Math.random() * 5)),
+      scoreLength: Math.ceil(Math.random() * 5),
       webWidth: 1000,
       webHeight: 1000,
       transLen: 0,
@@ -102,93 +107,94 @@ export default {
 
     // 单页宽度
     let scoreItemWidth = computed(() => {
-        return state.webWidth / state.pageSize;
-    });
+      return state.webWidth / state.pageSize
+    })
 
     // 总宽度
     let scoreWidth = computed(() => {
-        return (state.webWidth / state.pageSize) * state.scoreLength;
-    });
+      return (state.webWidth / state.pageSize) * state.scoreLength
+    })
 
     // 上一页禁用
     let prevDisabled = computed(() => {
-        return state.transLen >= 0;
-    });
+      return state.transLen >= 0
+    })
 
     // 下一页禁用
     let nextDisabled = computed(() => {
-      return (Math.abs(state.transLen) + state.pageSize >= state.scoreLength)
-        || state.scoreLength <= 1;
-    });
+      return (
+        Math.abs(state.transLen) + state.pageSize >= state.scoreLength ||
+        state.scoreLength <= 1
+      )
+    })
 
     const handler = () => {
-      let isFullscreen = document.fullscreenElement !== null;
+      let isFullscreen = document.fullscreenElement !== null
       if (!isFullscreen) {
-        // 退出全屏时候解除监听，不然每次监听都会添加一次绑定 
-        document.removeEventListener("fullscreenchange", handler);
+        // 退出全屏时候解除监听，不然每次监听都会添加一次绑定
+        document.removeEventListener('fullscreenchange', handler)
       }
-    };
+    }
 
     const openFullScreen = () => {
       if (!screenfull.isEnabled) {
-        console.error('你的浏览器暂不支持全屏');
+        console.error('你的浏览器暂不支持全屏')
         return false
       }
-      screenfull.request();
-    };
+      screenfull.request()
+    }
 
     onMounted(async () => {
-      const route = useRoute();
-      const scoreId = route.query.id;
-      const res = await axios.get(`/api/score/findById?id=${scoreId}`);
-      const scoreUrlList = res.data.scoreUrlList;
-      state.scoreUrlList = scoreUrlList;
-      state.scoreLength = scoreUrlList.length;
-
+      const route = useRoute()
+      const scoreId = route.query.id
+      const res = await axios.get(`/api/score/findById?id=${scoreId}`)
+      const scoreUrlList = res.data.scoreUrlList
+      state.scoreUrlList = scoreUrlList
+      state.scoreLength = scoreUrlList.length
 
       if (screenfull.isEnabled) {
-	      screenfull.on('change', () => {
-          screenfull.isFullscreen && (state.isFullScreen = true);
-          !screenfull.isFullscreen && (state.isFullScreen = false);
-        });
+        screenfull.on('change', () => {
+          screenfull.isFullscreen && (state.isFullScreen = true)
+          !screenfull.isFullscreen && (state.isFullScreen = false)
+        })
       }
 
-      state.webWidth = document.body.clientWidth;
-      state.webHeight = document.body.clientHeight;
+      state.webWidth = document.body.clientWidth
+      state.webHeight = document.body.clientHeight
 
-      state.options = [];
+      state.options = []
       for (let i = 1; i <= state.scoreLength; i++) {
         state.options.push({
           value: i,
           label: i + '页显示'
-        });
+        })
       }
 
       if (state.options.length < 2) {
-        state.pageSize = 1;
+        state.pageSize = 1
       }
     })
 
     const backHmoe = () => {
-      window.history.back();
+      window.history.back()
     }
 
     // 上一页
     const goPrev = () => {
       if (prevDisabled.value) {
-        return;
+        return
       }
 
       // 下一页
-      state.transLen++;
+      state.transLen++
     }
 
     const goNext = () => {
       if (nextDisabled.value) {
-        return;
+        return
       }
 
-      state.transLen--;
+      state.transLen--
     }
 
     return {
@@ -236,15 +242,16 @@ export default {
       bottom: 5%;
       transform: translate(-50%);
 
-      &-left, &-right {
-        background: rgba(0, 0, 0, .4);
+      &-left,
+      &-right {
+        background: rgba(0, 0, 0, 0.4);
         border-radius: 50%;
         width: 60px;
         height: 60px;
         cursor: pointer;
 
         &.disabled {
-          background: rgba(0 , 0, 0, .1);
+          background: rgba(0, 0, 0, 0.1);
         }
       }
 
@@ -262,13 +269,13 @@ export default {
     }
     .score-list {
       display: flex;
-      transition: all .35s;
+      transition: all 0.35s;
       &-item {
         position: relative;
         height: calc(100vh - 50px);
         padding-left: 5px;
         padding-right: 5px;
-        
+
         &.full-screen {
           height: 100vh;
         }

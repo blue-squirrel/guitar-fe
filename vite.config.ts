@@ -11,10 +11,10 @@ export default defineConfig({
   plugins: [
     vue(),
     AutoImport({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver()]
     }),
     Components({
-      resolvers: [ElementPlusResolver()],
+      resolvers: [ElementPlusResolver()]
     })
   ],
   resolve: {
@@ -26,7 +26,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://180.76.228.38:7001',
-        changeOrigin: true,
+        changeOrigin: true
         // rewrite: path => path.replace(/^\/api/, '')
       }
     }

@@ -1,1 +1,1 @@
-export { uploadCos } from './cos';
+export { uploadCos } from './cos'
