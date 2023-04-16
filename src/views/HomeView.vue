@@ -5,16 +5,18 @@
       个人的吉他谱网站
     </el-header>
     <el-main>
-      <el-card
-        type="primary"
-        shadow="always"
-        v-for="item in scoreList"
-        :key="item"
-        @click="goScoreDetail(item.id)"
-      >
-        <div class="score-title">{{ item.title }}</div>
-        <div>{{ item.author }}</div>
-      </el-card>
+      <div class="home-main-score-list">
+        <el-card
+          type="primary"
+          shadow="always"
+          v-for="item in scoreList"
+          :key="item"
+          @click="goScoreDetail(item.id)"
+        >
+          <div class="score-title">{{ item.title }}</div>
+          <div>{{ item.author }}</div>
+        </el-card>
+      </div>
     </el-main>
     <el-footer>
       <el-button
@@ -184,22 +186,30 @@ export default {
   .el-main {
     flex: 1;
     background: #f7f7f7;
-    display: flex;
+    // display: flex;
+    // flex-wrap: wrap;
 
-    .el-card {
-      width: 140px;
-      height: 100px;
-      margin-right: 20px;
-      // line-height: 100px;
-      cursor: pointer;
+    .home-main-score-list {
+      display: flex;
+      flex-wrap: wrap;
 
-      .score-title {
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 10px;
+      
+      .el-card {
+        width: 140px;
+        height: 100px;
+        margin-right: 20px;
+        cursor: pointer;
+        margin-bottom: 20px;
+
+        .score-title {
+          font-size: 16px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 10px;
+        }
       }
     }
+
   }
   .el-footer {
     line-height: 60px;
