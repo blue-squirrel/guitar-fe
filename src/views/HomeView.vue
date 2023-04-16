@@ -107,16 +107,16 @@ export default {
       window.location.href = `/about?id=${id}`
     }
 
-    const fileChange = async ({ file, filename }: any) => {
+    const fileChange = async ({ file }: any) => {
       try {
         let { title, author } = state.scoreData
         author = author ? `(${author})` : ''
         let prePath = title ? '/guitar/' + title + author + '/' : '/guitar/'
-        const filePath = prePath + filename
+        const filePath = prePath + file.name
         const res = await uploadCos(file, filePath)
         const reg = /\/.+/
         const url = res.Location.match(reg)[0]
-        state.fileList = [...state.fileList, { name: filename, value: url }]
+        state.fileList = [...state.fileList, { name: file.name, value: url }]
         state.scoreData = {
           ...state.scoreData,
           scoreUrl: state.fileList.map(item => item.value).join(',')

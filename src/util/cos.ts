@@ -5,6 +5,7 @@ import { config } from '../../config/index'
 export const uploadCos = async (file, filePath) => {
   // 为了保证桶的数据安全，数据桶的参数需要后端给你传，这样比较安全
   const { secretId, secretKey, bucketName, region } = config
+
   let res = {
     sessionToken: 'xxxxx',
     expiredTime: 1580000900
@@ -27,7 +28,6 @@ export const uploadCos = async (file, filePath) => {
   //    }
   //  })
 
-  console.log(filePath, 88)
   // 上传图片
   return new Promise((resolve, reject) => {
     // 这里使用最简单的 putObject 方法上传你需要上传的文件。
