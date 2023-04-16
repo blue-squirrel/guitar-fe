@@ -171,7 +171,7 @@ export default {
       flex-wrap: wrap;
 
       .el-card {
-        width: 140px;
+        width: 200px;
         height: 100px;
         margin-right: 20px;
         cursor: pointer;
