@@ -32,11 +32,10 @@
       </el-form-item>
       <el-form-item>
         <el-upload
-          v-model:file-list="fileList"
           class="upload-demo"
           multiple
-          action="#"
-          :on-progress="fileChange"
+          action="/"
+          :http-request="fileChange"
         >
           <el-button type="primary">点击上传曲谱</el-button>
           <template #tip>
@@ -108,21 +107,16 @@ export default {
       window.location.href = `/about?id=${id}`
     }
 
-    const fileChange = async (
-      event: any,
-      file: { name: string; raw: any },
-      files: any
-    ) => {
+    const fileChange = async ({ file, filename }: any) => {
       try {
-        console.log(file, state.scoreData.title)
         let { title, author } = state.scoreData
         author = author ? `(${author})` : ''
         let prePath = title ? '/guitar/' + title + author + '/' : '/guitar/'
-        const filePath = prePath + file.name
-        const res = await uploadCos(file.raw, filePath)
+        const filePath = prePath + filename
+        const res = await uploadCos(file, filePath)
         const reg = /\/.+/
         const url = res.Location.match(reg)[0]
-        state.fileList = [...state.fileList, { name: file.name, value: url }]
+        state.fileList = [...state.fileList, { name: filename, value: url }]
         state.scoreData = {
           ...state.scoreData,
           scoreUrl: state.fileList.map(item => item.value).join(',')
@@ -171,8 +165,6 @@ export default {
   .el-main {
     flex: 1;
     background: #f7f7f7;
-    // display: flex;
-    // flex-wrap: wrap;
 
     .home-main-score-list {
       display: flex;
